@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +31,10 @@ public class TakePictureActivity extends Activity implements View.OnClickListene
     private static final int TAKE_PHOTO_REQUEST_CODE = 1;
 
     private Boolean pictureTaken = false;
+
+    private static final String IMAGE_URI_KEY = "IMAGE_URI";
+    private static final String BITMAP_WIDTH = "BITMAP_WIDTH";
+    private static final String BITMAP_HEIGHT = "BITMAP_HEIGHT";
 
     private Uri selectedPhotoPath;
 
@@ -68,6 +73,7 @@ public class TakePictureActivity extends Activity implements View.OnClickListene
                 break;
 
             case R.id.enter_text_button:
+                moveToNextScreen();
                 break;
 
             default:
@@ -142,6 +148,20 @@ public class TakePictureActivity extends Activity implements View.OnClickListene
             cursor.close();
         }
         return Uri.parse(result);
+    }
+
+    private void moveToNextScreen() {
+
+        if (pictureTaken) {
+            Intent nextScreenIntent = new Intent(this, EnterTextActivity.class);
+            nextScreenIntent.putExtra(IMAGE_URI_KEY, selectedPhotoPath);
+            nextScreenIntent.putExtra(BITMAP_WIDTH, takePictureImageView.getWidth());
+            nextScreenIntent.putExtra(BITMAP_HEIGHT, takePictureImageView.getHeight());
+
+            startActivity(nextScreenIntent);
+        } else {
+            Toast.makeText(this, R.string.select_a_picture, Toast.LENGTH_SHORT).show();
+        }
     }
 
 
