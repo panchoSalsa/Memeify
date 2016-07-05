@@ -20,13 +20,16 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.sql.SQLClientInfoException;
 
 public class EnterTextActivity extends Activity implements View.OnClickListener {
 
     private static final String APP_PICTURE_DIRECTORY = "/Memeify";
     private static final String FILE_SUFFIX_JPG = ".jpg";
     private static final String HELVETICA_FONT = "Helvetica";
+
+    private static final String IMAGE_URI_KEY = "IMAGE_URI";
+    private static final String BITMAP_WIDTH = "BITMAP_WIDTH";
+    private static final String BITMAP_HEIGHT = "BITMAP_HEIGHT";
 
     private Bitmap viewBitmap;
     private Uri pictureUri;
@@ -56,6 +59,14 @@ public class EnterTextActivity extends Activity implements View.OnClickListener 
         bottomTextEditText = (EditText) findViewById(R.id.bottom_text_edittext);
 
         originalImage = true;
+
+        pictureUri = getIntent().getParcelableExtra(IMAGE_URI_KEY);
+
+        int bitmapWidth = getIntent().getIntExtra(BITMAP_WIDTH, 100);
+        int bitmapHeight = getIntent().getIntExtra(BITMAP_HEIGHT, 100);
+
+        Bitmap selectedImageBitmap = BitmapResizer.ShrinkBitmap(pictureUri.toString(), bitmapWidth, bitmapHeight);
+        selectedPicture.setImageBitmap(selectedImageBitmap);
     }
 
     @Override
@@ -64,6 +75,7 @@ public class EnterTextActivity extends Activity implements View.OnClickListener 
         switch (v.getId()) {
 
             case R.id.write_text_to_image_button:
+                createMeme();
                 break;
 
             case R.id.save_image_button:
