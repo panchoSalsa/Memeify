@@ -3,6 +3,7 @@ package com.raywenderlich.memeify;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -27,6 +28,8 @@ public class TakePictureActivity extends Activity implements View.OnClickListene
     private static final String FILE_SUFFIX_JPG = ".jpg";
 
     private static final int TAKE_PHOTO_REQUEST_CODE = 1;
+
+    private Boolean pictureTaken = false;
 
     private Uri selectedPhotoPath;
 
@@ -82,6 +85,24 @@ public class TakePictureActivity extends Activity implements View.OnClickListene
 
         captureIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
         startActivityForResult(captureIntent, TAKE_PHOTO_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == TAKE_PHOTO_REQUEST_CODE && resultCode == RESULT_OK) {
+            setImageViewWithImage();
+        }
+    }
+
+    private void setImageViewWithImage() {
+        Bitmap pictureBitmap = BitmapResizer.ShrinkBitmap(selectedPhotoPath.toString(),
+                takePictureImageView.getWidth(),
+                takePictureImageView.getHeight());
+        takePictureImageView.setImageBitmap(pictureBitmap);
+        lookingGoodTextView.setVisibility(View.VISIBLE);
+        pictureTaken = true;
     }
 
     private File createImageFile() {
