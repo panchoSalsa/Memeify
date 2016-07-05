@@ -57,6 +57,13 @@ public class TakePictureActivity extends Activity implements View.OnClickListene
     }
 
     @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        checkReceivedIntent();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -161,6 +168,21 @@ public class TakePictureActivity extends Activity implements View.OnClickListene
             startActivity(nextScreenIntent);
         } else {
             Toast.makeText(this, R.string.select_a_picture, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void checkReceivedIntent() {
+
+        Intent imageRecievedIntent = getIntent();
+        String intentAction = imageRecievedIntent.getAction();
+        String intentType = imageRecievedIntent.getType();
+
+        if (Intent.ACTION_SEND.equals(intentAction) && intentType != null) {
+            if (intentType.startsWith(MIME_TYPE_IMAGE)) {
+                Uri contentUri = imageRecievedIntent.getParcelableExtra(Intent.EXTRA_STREAM);
+                selectedPhotoPath = getRealPathFromURI(contentUri);
+                setImageViewWithImage();
+            }
         }
     }
 
