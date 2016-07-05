@@ -1,8 +1,8 @@
 package com.raywenderlich.memeify;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -25,6 +25,8 @@ public class TakePictureActivity extends Activity implements View.OnClickListene
     private static final String APP_PICTURE_DIRECTORY = "/Memeify";
     private static final String MIME_TYPE_IMAGE = "image/";
     private static final String FILE_SUFFIX_JPG = ".jpg";
+
+    private static final int TAKE_PHOTO_REQUEST_CODE = 1;
 
     private Uri selectedPhotoPath;
 
@@ -59,6 +61,7 @@ public class TakePictureActivity extends Activity implements View.OnClickListene
         switch (v.getId()) {
 
             case R.id.picture_imageview:
+                takePictureWithCamera();
                 break;
 
             case R.id.enter_text_button:
@@ -67,6 +70,18 @@ public class TakePictureActivity extends Activity implements View.OnClickListene
             default:
                 break;
         }
+    }
+
+    private void takePictureWithCamera() {
+
+        // create intent to capture image from camera
+        Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        File photoFile = createImageFile();
+        selectedPhotoPath = Uri.parse(photoFile.getAbsolutePath());
+
+        captureIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+        startActivityForResult(captureIntent, TAKE_PHOTO_REQUEST_CODE);
     }
 
     private File createImageFile() {
